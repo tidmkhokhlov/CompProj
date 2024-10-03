@@ -1,5 +1,9 @@
 #!/bin/sh
 
+#set up
+mkdir log
+mkdir backup
+
 #reading X
 X=shell
 echo "Enter X ammount."
