@@ -5,6 +5,8 @@ mkdir log
 dd if=/dev/zero of=env.img bs=1M count=100
 mkfs.ext4 env.img
 sudo mount -o loop env.img log
+sudo chmod 777 log
+rm -rf log/lost+found
 rm env.img
 mkdir back
 
@@ -15,7 +17,7 @@ D=$X * 0.7
 
 #reading log
 Y=sudo du -s log |awk '{print $1}'
-echo $Y
+# echo $Y
 
 #main condition
 if [$Y -le $D]
@@ -24,7 +26,7 @@ then
 	sudo tar -czf back.tar.gz log
 	echo "/log archived"
 	#removing files in log
-	sudo rm -r log/*
+	sudo rm -rf log/*
 	#backup moving
 	mv back.tar.gz back
 	echo "archive moved"
