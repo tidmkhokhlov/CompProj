@@ -1,6 +1,6 @@
 # About
 
-Just a simple shell-script, that compares the size of log folder, and then, depending on the results of comparisons, performs certain actions such as archiving, moving e.t.c.
+Just a simple shell-script, that compares the size of ```log``` folder, and then, depending on the results of comparisons, performs certain actions such as archiving(via ```tar+gz```), moving e.t.c.
 
 # How to use
 
