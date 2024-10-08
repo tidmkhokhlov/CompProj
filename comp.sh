@@ -1,14 +1,20 @@
 #!/bin/sh
 
 #env
-mkdir log
+if [ ! -d log ]; 
+then
+  mkdir log
+fi
 dd if=/dev/zero of=env.img bs=1M count=100
 mkfs.ext4 env.img
 sudo mount -o loop env.img log
 sudo chmod 777 log
 rm -rf log/lost+found
 rm env.img
-mkdir back
+if [ ! -d back ]; 
+then
+  mkdir back
+fi
 
 #reading X
 echo -e "\e[4mEnter X ammount.\e[0m"
