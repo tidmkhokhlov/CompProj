@@ -5,7 +5,6 @@ if [ ! -d log ];
 then
   mkdir log
 fi
-mkdir log
 dd if=/dev/zero of=env.img bs=1M count=100
 mkfs.ext4 env.img
 sudo mount -o loop env.img log
