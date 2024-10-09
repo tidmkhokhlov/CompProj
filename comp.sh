@@ -3,6 +3,8 @@
 SCRIPT_DIR="$(dirname "$0")"
 LOG_DIR="$SCRIPT_DIR/log"
 BACKUP_DIR="$SCRIPT_DIR/backup"
+MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2 ГБ в байтах
+THRESHOLD_SIZE=$((MAX_SIZE * 70 / 100))  # 70% от 2 ГБ
 
 #env
 if [ ! -d "$LOG_DIR" ]; 
@@ -20,25 +22,19 @@ then
   mkdir "$BACKUP_DIR"
 fi
 
-#reading X
-echo -e "\e[4mEnter X ammount.\e[0m"
-read X
-D= $X * 0.7
-
 #reading log
-Y= du -s "$LOG_DIR" | awk '{print $1}'
-# echo $Y
+CURRENT_SIZE=$(du -sb "$LOG_DIR" | awk '{print $1}')
 
 #main condition
-if [$Y -le $D]
+if [ "$CURRENT_SIZE" -ge "$THRESHOLD_SIZE" ];
 then
 	#archiving
-	find "$LOG_DIR" -type f -printf '%T+ %p\n' | sort | head -n $Y-$D | cut -d' ' -f2- | tar -czf "$BACKUP_DIR"$(date +'%Y-%m-%d_%H-%M-%S').tar.gz -T -
+	find "$LOG_DIR" -type f -printf '%T+ %p\n' | sort | head -n $CURRENT_SIZE-$D | cut -d' ' -f2- | tar -czf "$BACKUP_DIR"$(date +'%CURRENT_SIZE-%m-%d_%H-%M-%S').tar.gz -T -
 	echo -e "\e[42mLog Archived\e[0m"
 	#removing files in "$LOG_DIR"
 	sudo rm -rf "$LOG_DIR"/*
 	#backup moving
-	mv "$BACKUP_DIR"$(date +'%Y-%m-%d_%H-%M-%S').tar.gz "$BACKUP_DIR"
+	mv "$BACKUP_DIR"$(date +'%CURRENT_SIZE-%m-%d_%H-%M-%S').tar.gz "$BACKUP_DIR"
 	echo -e "\e[42mArchive moved\e[0m"
 fi
 
