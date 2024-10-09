@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SCRIPT_DIR="$(dirname "$0")" # Получаем директорию скрипта
 LOG_DIR="$SCRIPT_DIR/log"
@@ -6,12 +6,19 @@ BACKUP_DIR="$SCRIPT_DIR/backup"
 MAX_SIZE=$((2 * 1024 * 1024 * 1024))  # 2 ГБ в байтах
 THRESHOLD_SIZE=$((MAX_SIZE * 70 / 100))  # 70% от 2 ГБ
 
+# Проверка аргументов
+if [ $# -ne 1 ]; then
+    echo "Использование: $0 <порог_в_%>"
+    exit 1
+fi
+
+# Создание папок, если они не существуют
 mkdir -p "$LOG_DIR" "$BACKUP_DIR"
 
-#reading log
+# Получение текущего размера папки в байтах
 CURRENT_SIZE=$(du -sb "$LOG_DIR" | awk '{print $1}')
 
-#main condition
+# Проверка заполнения
 if [ "$CURRENT_SIZE" -ge "$THRESHOLD_SIZE" ]; then
     echo "Папка $LOG_DIR заполнена на $(($CURRENT_SIZE / 1024 / 1024)) MB. Начинаю архивирование..."
 
@@ -37,7 +44,3 @@ if [ "$CURRENT_SIZE" -ge "$THRESHOLD_SIZE" ]; then
 else
     echo "Папка $LOG_DIR заполнена на $(($CURRENT_SIZE / 1024 / 1024)) MB. Архивирование не требуется."
 fi
-
-
-
-
