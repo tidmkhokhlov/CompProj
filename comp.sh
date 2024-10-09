@@ -11,9 +11,9 @@ sudo mount -o loop env.img log
 sudo chmod 777 log
 rm -rf log/lost+found
 rm env.img
-if [ ! -d back ]; 
+if [ ! -d backup ]; 
 then
-  mkdir back
+  mkdir backup
 fi
 
 #reading X
@@ -29,12 +29,12 @@ Y= du -s log | awk '{print $1}'
 if [$Y -le $D]
 then
 	#archiving
-	find log -type f -printf '%T+ %p\n' | sort | head -n $Y-$D | cut -d' ' -f2- | tar -czf back$(date +'%Y-%m-%d_%H-%M-%S').tar.gz -T -
+	find log -type f -printf '%T+ %p\n' | sort | head -n $Y-$D | cut -d' ' -f2- | tar -czf backup$(date +'%Y-%m-%d_%H-%M-%S').tar.gz -T -
 	echo -e "\e[42mLog Archived\e[0m"
 	#removing files in log
 	sudo rm -rf log/*
 	#backup moving
-	mv back$(date +'%Y-%m-%d_%H-%M-%S').tar.gz back
+	mv backup$(date +'%Y-%m-%d_%H-%M-%S').tar.gz backup
 	echo -e "\e[42mArchive moved\e[0m"
 fi
 
