@@ -29,12 +29,12 @@ Y= du -s log | awk '{print $1}'
 if [$Y -le $D]
 then
 	#archiving
-	sudo tar -czf back.tar.gz log
+	find log -type f -printf '%T+ %p\n' | sort | head -n $Y-$D | cut -d' ' -f2- | tar -czf back$(date +'%Y-%m-%d_%H-%M-%S').tar.gz -T -
 	echo -e "\e[42mLog Archived\e[0m"
 	#removing files in log
 	sudo rm -rf log/*
 	#backup moving
-	mv back.tar.gz back
+	mv back$(date +'%Y-%m-%d_%H-%M-%S').tar.gz back
 	echo -e "\e[42mArchive moved\e[0m"
 fi
 
