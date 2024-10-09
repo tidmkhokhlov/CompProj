@@ -26,7 +26,7 @@ done
 # Тест 1: Проверка архивирования при заполнении > 70%
 echo "Запуск теста 1..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-comp.sh 70
+./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
@@ -46,7 +46,7 @@ done
 # Тест 2: Проверка архивирования при заполнении = 70%
 echo "Запуск теста 2..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-comp.sh 70
+./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
@@ -63,7 +63,7 @@ rm -f "$LOG_DIR"/*  # Удаляем файлы для теста
 dd if=/dev/zero of="$LOG_DIR/smallfile.txt" bs=100M count=1 > /dev/null 2>&1
 
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-comp.sh 70
+./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
@@ -83,7 +83,7 @@ done
 # Тест 4: Проверка архивирования N старейших файлов
 echo "Запуск теста 4..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-comp.sh 70
+./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
