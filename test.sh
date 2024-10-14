@@ -24,15 +24,15 @@ for i in {1..10}; do
 done
 
 # Тест 1: Проверка архивирования при заполнении > 70%
-echo "Запуск теста 1..."
+echo "Running test 1..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 ./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
-    echo -e "\e[42mТест 1 пройден: Архив создан.\e[0m"
+    echo -e "\e[42mTest 1 passed: Archive created.\e[0m"
 else
-    echo -e "\e[41mТест 1 не пройден: Архив не создан.\e[0m"
+    echo -e "\e[41mTest 1 failed: Archive not created.\e[0m"
 fi
 
 # Очистка
@@ -44,19 +44,19 @@ for i in {1..7}; do
 done
 
 # Тест 2: Проверка архивирования при заполнении = 70%
-echo "Запуск теста 2..."
+echo "Running test 2..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 ./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
-    echo -e "\e[42mТест 2 пройден: Архив не создан.\e[0m"
+    echo -e "\e[42mTest 2 passed: Archive not created.\e[0m"
 else
-    echo -e "\e[41mТест 2 не пройден: Архив не должен был быть создан.\e[0m"
+    echo -e "\e[41mTest 2 failed: Archive should not have been created.\e[0m"
 fi
 
 # Тест 3: Проверка, когда заполнение < 70%
-echo "Запуск теста 3..."
+echo "Running test 3..."
 rm -f "$LOG_DIR"/*  # Удаляем файлы для теста
 
 # Создаем только небольшой файл, чтобы заполнение было < 70% (общий размер = 0.1 ГБ)
@@ -67,9 +67,9 @@ initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
-    echo -e "\e[42mТест 3 пройден: Архив не создан.\e[0m"
+    echo -e "\e[42mTest 3 passed: Archive not created.\e[0m"
 else
-    echo -e "\e[41mТест 3 не пройден: Архив не должен был быть создан.\e[0m"
+    echo -e "\e[41mTest 3 failed: Archive should not have been created.\e[0m"
 fi
 
 # Очистка
@@ -81,15 +81,15 @@ for i in {1..10}; do
 done
 
 # Тест 4: Проверка архивирования N старейших файлов
-echo "Запуск теста 4..."
+echo "Running test 4..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 ./comp.sh 70
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
-    echo -e "\e[42mТест 4 пройден: Архив создан.\e[0m"
+    echo -e "\e[42mTest 4 passed: Archive created.\e[0m"
 else
-    echo -e "\e[41mТест 4 не пройден: Архив не создан.\e[0m"
+    echo -e "\e[41mTest 4 failed: Archive not created.\e[0m"
 fi
 
 #Отключение ограниченной папки
