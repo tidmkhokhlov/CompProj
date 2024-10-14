@@ -7,14 +7,6 @@ BACKUP_DIR="$SCRIPT_DIR/backup"
 # Создание папок, если они не существуют
 mkdir -p "$LOG_DIR" "$BACKUP_DIR"
 
-#Ограничение папки
-dd if=/dev/zero of=env.img bs=1M count=2048
-mkfs.ext4 env.img
-sudo mount -o loop env.img "$LOG_DIR"
-sudo chmod 777 "$LOG_DIR"
-rm -rf "$LOG_DIR"/lost+found
-rm env.img
-
 # Очистка
 rm -rf "$LOG_DIR"/* "$BACKUP_DIR"/*
 
@@ -26,7 +18,7 @@ done
 # Тест 1: Проверка архивирования при заполнении > 70%
 echo "Running test 1..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-./comp.sh 70
+./comp.sh 
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
@@ -46,7 +38,7 @@ done
 # Тест 2: Проверка архивирования при заполнении = 70%
 echo "Running test 2..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-./comp.sh 70
+./comp.sh 
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
@@ -63,7 +55,7 @@ rm -f "$LOG_DIR"/*  # Удаляем файлы для теста
 dd if=/dev/zero of="$LOG_DIR/smallfile.txt" bs=100M count=1 > /dev/null 2>&1
 
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-./comp.sh 70
+./comp.sh 
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 0 ]; then
@@ -83,7 +75,7 @@ done
 # Тест 4: Проверка архивирования N старейших файлов
 echo "Running test 4..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
-./comp.sh 70
+./comp.sh 
 new_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 
 if [ $((new_count - initial_count)) -eq 1 ]; then
@@ -92,6 +84,3 @@ else
     echo -e "\e[41mTest 4 failed: Archive not created.\e[0m"
 fi
 
-#Отключение ограниченной папки
-sudo umount "$LOG_DIR"
-echo -e "$LOG_DIR folder \e[4munmounted\e[0m."
