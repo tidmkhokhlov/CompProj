@@ -10,8 +10,8 @@ mkdir -p "$LOG_DIR" "$BACKUP_DIR"
 # Очистка
 rm -rf "$LOG_DIR"/* "$BACKUP_DIR"/*
 
-# Генерация тестовых файлов (общий размер = 2 ГБ)
-for i in $(seq 1 10); do
+# Генерация тестовых файлов (общий размер = 1.8 ГБ)
+for i in $(seq 1 9); do
     dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=200M count=1 > /dev/null 2>&1
 done
 
@@ -67,12 +67,12 @@ fi
 # Очистка
 rm -rf "$LOG_DIR"/*
 
-# Генерация новых файлов
-for i in $(seq 1 10); do
-    dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=200M count=1 > /dev/null 2>&1
+# Генерация тестовых файлов (общий размер = 0.5 ГБ)
+for i in $(seq 1 5); do
+    dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=100M count=1 > /dev/null 2>&1
 done
 
-# Тест 4: Проверка архивирования N старейших файлов
+# Тест 4: Проверка архивирования с другим N и %
 echo "Running test 4..."
 initial_count=$(ls -1 "$BACKUP_DIR" | wc -l)
 ./comp.sh 

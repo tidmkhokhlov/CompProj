@@ -4,30 +4,40 @@ SCRIPT_DIR="$(dirname "$0")" # Получаем директорию скрип�
 LOG_DIR="$SCRIPT_DIR/log"
 BACKUP_DIR="$SCRIPT_DIR/backup"
 
-# Получаем MAX_SIZE от пользователя
-echo -e "\e[4mEnter MAX_SIZE of the folder.\e[0m"
-read MAX_SIZE
-
-# Получаем THRESHOLD_SIZE
-echo -e "\e[4mEnter the folder fill percentage.\e[0m"
-read THRESHOLD_PERCENT
-THRESHOLD_SIZE=$(($MAX_SIZE * $THRESHOLD_PERCENT / 100))
-
-# Создание папок, если они не существуют
-mkdir -p "$LOG_DIR" "$BACKUP_DIR"
-
-#Ограничение папки
-echo -e "\e[4mThe folder is going to be limited by $MAX_SIZE Mb. Y/n?\e[0m"
-read ANSWER
-if [ $ANSWER = "Y" ]; then
+# Функция лимитирования папки
+limitation() {
     dd if=/dev/zero of=env.img bs=1M count=$MAX_SIZE
     mkfs.ext4 env.img
     sudo mount -o loop env.img "$LOG_DIR"
     sudo chmod 777 "$LOG_DIR"
     rm -rf "$LOG_DIR"/lost+found
     rm env.img
+}
+
+# Получаем MAX_SIZE от пользователя
+echo -e "Enter \e[4mMAX_SIZE (MB)\e[0m of the folder."
+read MAX_SIZE
+
+# Создание папок, если они не существуют
+mkdir -p "$LOG_DIR" "$BACKUP_DIR"
+
+#Ограничение папки
+echo -e "The folder is going to be limited by \e[4m$MAX_SIZE Mb\e[0m. Y/n?"
+read ANSWER
+if [ $ANSWER = "Y" ]; then
+
+    # Сохранение имеющихся файлов
+    if [ $(ls -1 "$LOG_DIR" | wc -l) != 0 ]; then
+        tar -czf "log_buffer.tar.gz" -C "$LOG_DIR" . # Архивируем файлы
+        rm -f "$LOG_DIR"/*
+        limitation
+        tar -xzf log_buffer.tar.gz -C "$LOG_DIR" # Разархивируем обратно
+        rm log_buffer.tar.gz
+    else
+        limitation
+    fi
 else
-    echo -e "\e[4mIs the folder already limited? Y/n?\e[0m"
+    echo "Is the folder already limited? Y/n?"
     read ANSWER
     if [ $ANSWER != "Y" ]; then
         echo -e "\e[41mScript execution stopped.\e[0m"
@@ -35,15 +45,20 @@ else
     fi
 fi
 
+# Получаем THRESHOLD_SIZE
+echo -e "Enter the folder \e[4mfill percentage\e[0m."
+read THRESHOLD_PERCENT
+THRESHOLD_SIZE=$(($MAX_SIZE * $THRESHOLD_PERCENT / 100))
+
 # Получение текущего размера папки в байтах
 CURRENT_SIZE=$(du -sb "$LOG_DIR" | awk '{print $1}')
 
 # Проверка заполнения
-if [ "$CURRENT_SIZE" -ge "$THRESHOLD_SIZE" ]; then
+if [ "$CURRENT_SIZE" -ge "$(($THRESHOLD_SIZE * 1024 * 1024))" ]; then
     echo "Folder $LOG_DIR is full by $(($CURRENT_SIZE / 1024 / 1024)) MB. Starting archiving..."
 
     # Получаем N
-    echo -e "\e[4mThere are $(ls -1 "$LOG_DIR" | wc -l) files in the folder. How many to archive?\e[0m"
+    echo -e "There are \e[4m$(ls -1 "$LOG_DIR" | wc -l)\e[0m files in the folder. How many to archive?"
     read N
 
     # Находим N старейших файлов
@@ -52,7 +67,7 @@ if [ "$CURRENT_SIZE" -ge "$THRESHOLD_SIZE" ]; then
         echo "No files to archive."
         
         #Отключение ограниченной папки
-        echo -e "\e[4mThe folder is going to be unlimited. All files will be deleted. Y/n?\e[0m"
+        echo -e "The folder is going to be unlimited. \e[4mAll files will be deleted\e[0m. Y/n?"
         read ANSWER
         if [ $ANSWER = "Y" ]; then
             sudo umount "$LOG_DIR"
@@ -79,7 +94,7 @@ else
 fi
 
 #Отключение ограниченной папки
-echo -e "\e[4mThe folder is going to be unlimited. All files will be deleted. Y/n?\e[0m"
+echo -e "The folder is going to be unlimited. \e[4mAll files will be deleted\e[0m. Y/n?"
 read ANSWER
 if [ $ANSWER = "Y" ]; then
     sudo umount "$LOG_DIR"
