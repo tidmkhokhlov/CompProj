@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 SCRIPT_DIR="$(dirname "$0")" # Получаем директорию скрипта
 LOG_DIR="$SCRIPT_DIR/log"
