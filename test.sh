@@ -11,7 +11,7 @@ mkdir -p "$LOG_DIR" "$BACKUP_DIR"
 rm -rf "$LOG_DIR"/* "$BACKUP_DIR"/*
 
 # Генерация тестовых файлов (общий размер = 2 ГБ)
-for i in {1..10}; do
+for i in $(seq 1 10); do
     dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=200M count=1 > /dev/null 2>&1
 done
 
@@ -31,7 +31,7 @@ fi
 rm -rf "$LOG_DIR"/*
 
 # Генерация новых файлов (общий размер = 1.4 ГБ)
-for i in {1..7}; do
+for i in $(seq 1 7); do
     dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=200M count=1 > /dev/null 2>&1
 done
 
@@ -68,7 +68,7 @@ fi
 rm -rf "$LOG_DIR"/*
 
 # Генерация новых файлов
-for i in {1..10}; do
+for i in $(seq 1 10); do
     dd if=/dev/zero of="$LOG_DIR/testfile$i.txt" bs=200M count=1 > /dev/null 2>&1
 done
 
